@@ -58,32 +58,56 @@ Socket programming finds applications in various domains, including web developm
 client.py :
 ```
 import socket
-from datetime import datetime
-s=socket.socket()
-s.bind(('localhost',8000))
-s.listen(5)
-c,addr=s.accept()
-print("Client Address : ",addr)
-now = datetime.now()
-c.send(now.strftime("%d/%m/%Y %H:%M:%S").encode())
-ack=c.recv(1024).decode()
-if ack:
-    print(ack)
-    c.close()
+
+
+client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+host = '127.0.0.1'
+port = 1437
+client_socket.connect((host, port))
+
+
+message = "Hello Server!"
+client_socket.send(message.encode())
+
+
+data = client_socket.recv(1024).decode()
+print("Server says:", data)
+
+
+client_socket.close()
 ```
 server.py
 ```
 import socket
-s=socket.socket()
-s.connect(('localhost',8000))
-print(s.getsockname())
-print(s.recv(1024).decode())
-s.send("acknowledgement recived from the server".encode())
-s.close()
+server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+host = '127.0.0.1'
+port = 1437
+
+server_socket.bind((host, port))
+
+server_socket.listen(2)
+print("Server is waiting for connection...")
+
+conn, addr = server_socket.accept()
+print("Connected to:", addr)
+
+data = conn.recv(1024).decode()
+print("Client says:", data)
+
+
+message = "Hello Client, message received!"
+conn.send(message.encode())
+
+conn.close()
+server_socket.close()
 ```
 
 ## Output:
-<img width="1650" height="356" alt="Screenshot 2026-05-19 131645" src="https://github.com/user-attachments/assets/33a0c2a7-0210-48ee-858e-0a549c175be1" />
+
+<img width="1919" height="870" alt="client1a_output" src="https://github.com/user-attachments/assets/e845ae8b-83d1-4356-a66e-5e8ddb45d086" />
+
+<img width="1919" height="719" alt="server1a ouput" src="https://github.com/user-attachments/assets/019cbbe8-4780-467f-a785-f56db7a530f7" />
 
 ## Result:
 Thus the study of Socket Programming Completed Successfully
